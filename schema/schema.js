@@ -17,12 +17,19 @@ const UserType = new GraphQLObjectType({
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
     age: { type: GraphQLInt },
-    company: { type: CompanyType },
+    company: {
+      type: CompanyType,
+      resolve(parentValue, args) {
+        return axios
+          .get(`http://localhost:3000/companies/${parentValue.companyId}`)
+          .then((res) => res.data)
+      },
+    },
   },
 })
 
-const RootQuery = new GraphQLObjectType({
-  name: "RootQueryType",
+const RootQueryType = new GraphQLObjectType({
+  name: "RootQuery",
   fields: {
     user: {
       type: UserType,
@@ -37,5 +44,5 @@ const RootQuery = new GraphQLObjectType({
 })
 
 module.exports = new GraphQLSchema({
-  query: RootQuery,
+  query: RootQueryType,
 })
