@@ -10,6 +10,7 @@
   "author": "Vlad Balabkin<foxyfo1703@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "concurrently": "^6.2.0",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
