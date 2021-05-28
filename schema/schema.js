@@ -6,6 +6,7 @@ const {
   GraphQLInt,
   GraphQLSchema,
   GraphQLList,
+  GraphQLNonNull,
 } = graphql
 
 const instance = axios.create({
@@ -72,15 +73,39 @@ const mutation = new GraphQLObjectType({
     addUser: {
       type: UserType,
       args: {
-        firstName: { type: GraphQLString },
-        age: { type: GraphQLInt },
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
         companyId: { type: GraphQLString },
       },
-      resolve(parentValue, args) {},
+      resolve(parentValue, args) {
+        return instance.post("/users", args).then((r) => r.data)
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parentValue, { id }) {
+        return instance.delete(`/users/${id}`).then((r) => r.data)
+      },
+    },
+    editUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        firstName: { type: GraphQLString },
+        age: { type: GraphQLString },
+        companyId: { type: GraphQLString },
+      },
+      resolve(parentValue, args) {
+        return instance.patch(`/users/${args.id}`, args).then((r) => r.data)
+      },
     },
   },
 })
 
 module.exports = new GraphQLSchema({
   query: RootQueryType,
+  mutation,
 })
